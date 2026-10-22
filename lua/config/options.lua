@@ -3,25 +3,13 @@
 local has = vim.fn.has
 local executable = vim.fn.executable
 
-if has("macunix") == 1
-  and executable("pbcopy") == 1
-  and executable("pbpaste") == 1
-then
-  vim.g.clipboard = {
-    name = "macOS clipboard",
-    copy = {
-      ["+"] = { "pbcopy" },
-      ["*"] = { "pbcopy" },
-    },
-    paste = {
-      ["+"] = { "pbpaste" },
-      ["*"] = { "pbpaste" },
-    },
-    cache_enabled = 0,
-  }
+if has("macunix") == 1 and executable("pbcopy") == 1 and executable("pbpaste") == 1 then
+  vim.g.clipboard = "pbcopy"
+elseif vim.env.WAYLAND_DISPLAY and executable("wl-copy") == 1 and executable("wl-paste") == 1 then
+  vim.g.clipboard = "wl-copy"
 else
-  -- Kitty and other compatible terminals.
   vim.g.clipboard = "osc52"
 end
 
 vim.opt.clipboard = "unnamedplus"
+
